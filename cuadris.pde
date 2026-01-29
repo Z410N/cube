@@ -1,9 +1,13 @@
 int seed = int(random(999999));
+int hiRes = 1920;
+PGraphics pg;
 
 void setup() {
   size(960, 960, P3D);
   smooth(8);
   pixelDensity(2);
+  pg = createGraphics(hiRes, hiRes, P3D);
+  pg.smooth(8);
   generate();
 }
 
@@ -19,71 +23,86 @@ void keyPressed() {
 }
 
 void generate() {
+  randomSeed(seed);
+  noiseSeed(seed);
+
+  int bg = getColor(random(10));
+  float fov = PI/random(2.2, 3.0);
+  float rx = random(TAU), ry = random(TAU), rz = random(TAU);
+
+  background(bg);
+  drawScene(this.g, width, height, fov, rx, ry, rz);
 
   randomSeed(seed);
   noiseSeed(seed);
-  background(getColor(random(10)));
+  random(10); random(2.2, 3.0); random(TAU); random(TAU); random(TAU);
 
-  float fov = PI/random(2.2, 3.0);
-  float cameraZ = (height/2.0) / tan(fov/2.0);
-  perspective(fov, float(width)/float(height), cameraZ/10.0, cameraZ*10.0);
+  pg.beginDraw();
+  pg.background(bg);
+  drawScene(pg, hiRes, hiRes, fov, rx, ry, rz);
+  pg.endDraw();
+}
 
-  translate(width*0.5, height*0.5);
-  rotateX(random(TAU));
-  rotateY(random(TAU));
-  rotateZ(random(TAU));
+void drawScene(PGraphics g, int w, int h, float fov, float rx, float ry, float rz) {
+  float cameraZ = (h/2.0) / tan(fov/2.0);
+  g.perspective(fov, float(w)/float(h), cameraZ/10.0, cameraZ*10.0);
 
-  float size = 500;
+  g.translate(w*0.5, h*0.5);
+  g.rotateX(rx);
+  g.rotateY(ry);
+  g.rotateZ(rz);
 
-  stroke(0, 20);
-  strokeWeight(0.5);
+  float size = 500 * (w / 960.0);
 
-  scale(1.2);
+  g.stroke(0, 20);
+  g.strokeWeight(0.5 * (w / 960.0));
+
+  g.scale(1.2);
 
   for (int i = 0; i < 640; i++) {
-    pushMatrix();
-    rotateX((TAU/4)*int(random(8)));
-    rotateY((TAU/4)*int(random(8)));
-    rotateZ((TAU/4)*int(random(8)));
-    translate(random(-size, size), random(-size, size), random(-size, size));
-    float w = random(10, 80);
-    float h = random(10, 80);
-    float d = random(10, 80);
-    fill(getColor());
-    boxGrid(w, h, d, int(random(4, 19)), int(random(4, 19)), int(random(4, 19)), 0.2);
-    popMatrix();
+    g.pushMatrix();
+    g.rotateX((TAU/4)*int(random(8)));
+    g.rotateY((TAU/4)*int(random(8)));
+    g.rotateZ((TAU/4)*int(random(8)));
+    g.translate(random(-size, size), random(-size, size), random(-size, size));
+    float bw = random(10, 80) * (w / 960.0);
+    float bh = random(10, 80) * (w / 960.0);
+    float bd = random(10, 80) * (w / 960.0);
+    g.fill(getColor());
+    boxGrid(g, bw, bh, bd, int(random(4, 19)), int(random(4, 19)), int(random(4, 19)), 0.2 * (w / 960.0));
+    g.popMatrix();
   }
   for (int i = 0; i < 640; i++) {
-    pushMatrix();
-    rotateX((TAU/4)*int(random(8)));
-    rotateY((TAU/4)*int(random(8)));
-    rotateZ((TAU/4)*int(random(8)));
-    translate(random(-size, size), random(-size, size), random(-size, size));
-    float w = random(10, 80);
-    float h = random(10, 80);
-    float d = random(10, 80);
-    fill(getColor());
-    box(w*20, h*0.02, d*0.02);
-    popMatrix();
+    g.pushMatrix();
+    g.rotateX((TAU/4)*int(random(8)));
+    g.rotateY((TAU/4)*int(random(8)));
+    g.rotateZ((TAU/4)*int(random(8)));
+    g.translate(random(-size, size), random(-size, size), random(-size, size));
+    float bw = random(10, 80) * (w / 960.0);
+    float bh = random(10, 80) * (w / 960.0);
+    float bd = random(10, 80) * (w / 960.0);
+    g.fill(getColor());
+    g.box(bw*20, bh*0.02, bd*0.02);
+    g.popMatrix();
   }
   for (int i = 0; i < 6400; i++) {
-    pushMatrix();
-    rotateX((TAU/4)*int(random(8)));
-    rotateY((TAU/4)*int(random(8)));
-    rotateZ((TAU/4)*int(random(8)));
-    translate(random(-size, size), random(-size, size), random(-size, size));
-    float w = random(10, 80);
-    float h = random(10, 80);
-    float d = random(10, 80);
-    fill(getColor());
-    box(w*0.04, h*0.04, d*0.04);
-    popMatrix();
+    g.pushMatrix();
+    g.rotateX((TAU/4)*int(random(8)));
+    g.rotateY((TAU/4)*int(random(8)));
+    g.rotateZ((TAU/4)*int(random(8)));
+    g.translate(random(-size, size), random(-size, size), random(-size, size));
+    float bw = random(10, 80) * (w / 960.0);
+    float bh = random(10, 80) * (w / 960.0);
+    float bd = random(10, 80) * (w / 960.0);
+    g.fill(getColor());
+    g.box(bw*0.04, bh*0.04, bd*0.04);
+    g.popMatrix();
   }
 }
 
-void boxGrid(float w, float h, float d, int cw, int ch, int cd, float bb) {
+void boxGrid(PGraphics g, float w, float h, float d, int cw, int ch, int cd, float bb) {
   float sw = w*1./cw;
-  float sh = h*1./ch; 
+  float sh = h*1./ch;
   float sd = d*1./cd;
   float det = random(0.01);
   float des = random(1000);
@@ -93,17 +112,16 @@ void boxGrid(float w, float h, float d, int cw, int ch, int cd, float bb) {
     for (int j = 0; j < ch; j++) {
       for (int i = 0; i < cw; i++) {
 
-        if ((i+j+k)%2 == 0) fill(c1);
-        else fill(c2);
+        if ((i+j+k)%2 == 0) g.fill(c1);
+        else g.fill(c2);
 
-        pushMatrix();
+        g.pushMatrix();
         float dx = -w*0.5+(i+0.5)*sw;
         float dy = -h*0.5+(j+0.5)*sh;
         float dz = -d*0.5+(k+0.5)*sd;
-        translate(dx, dy, dz);
-        //fill(getColor(noise(des+dx*det, des+dy*det)*colors.length));
-        box(sw-bb, sh-bb, sd-bb);
-        popMatrix();
+        g.translate(dx, dy, dz);
+        g.box(sw-bb, sh-bb, sd-bb);
+        g.popMatrix();
       }
     }
   }
@@ -111,7 +129,7 @@ void boxGrid(float w, float h, float d, int cw, int ch, int cd, float bb) {
 
 void saveImage() {
   String timestamp = year() + nf(month(), 2) + nf(day(), 2) + "-"  + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
-  saveFrame(timestamp+".png");
+  pg.save(timestamp+".png");
 }
 
 //int colors[] = {#FFFFFF, #FFC930, #F58B3F, #395942, #212129};
@@ -125,8 +143,8 @@ int getColor() {
 }
 int getColor(float v) {
   v = abs(v);
-  v = v%(colors.length); 
-  int c1 = colors[int(v%colors.length)]; 
-  int c2 = colors[int((v+1)%colors.length)]; 
+  v = v%(colors.length);
+  int c1 = colors[int(v%colors.length)];
+  int c2 = colors[int((v+1)%colors.length)];
   return lerpColor(c1, c2, pow(v%1, 2));
 }
