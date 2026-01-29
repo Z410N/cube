@@ -25,6 +25,7 @@ void keyPressed() {
 void generate() {
   randomSeed(seed);
   noiseSeed(seed);
+  pickPalette();
 
   int bg = getColor(random(10));
   float fov = PI/random(2.2, 3.0);
@@ -35,6 +36,7 @@ void generate() {
 
   randomSeed(seed);
   noiseSeed(seed);
+  random(palettes.length);
   random(10); random(2.2, 3.0); random(TAU); random(TAU); random(TAU);
 
   pg.beginDraw();
@@ -132,9 +134,59 @@ void saveImage() {
   pg.save(timestamp+".png");
 }
 
-//int colors[] = {#FFFFFF, #FFC930, #F58B3F, #395942, #212129};
-int colors[] = {#F4D3DE, #E04728, #F7B63D, #3F9686, #313168};
-//int colors[] = {#F8F8F9, #FE3B00, #7233A6, #0601FE, #000000};
+int[][] palettes = {
+  {#F4D3DE, #E04728, #F7B63D, #3F9686, #313168}, // og
+  {#2b2b2b, #e5e5e5, #fca311, #14213d}, // Anglican
+  {#2d3142, #bfc0c0, #ffffff, #ef8354, #4f5d75}, // Baikal
+  {#000000, #ffffff}, // Black & White
+  {#1c7c54, #73e2a7, #def4c6, #1b512d, #b6e2d3}, // Buy me a shrubbery
+  {#e3ddcf, #6c6b61, #e8472e, #2d3637, #c6b5b5}, // CC239
+  {#4c5b5c, #ff715b, #f9cb40, #bced09, #2f52e0}, // CC242
+  {#011627, #fdfffc, #2ec4b6, #e71d36, #ff9f1c}, // Cliffs
+  {#3d5a80, #98c1d9, #e0fbfc, #ee6c4d, #293241}, // Cold
+  {#e2e2e2, #c9c9c9, #919191, #5e5e5e, #2b2b2b}, // Cube
+  {#3b3628, #c39a8e, #e6c9c6, #674843, #394a59}, // Ducci J
+  {#403337, #d9b8a8, #a6897e, #734c3e, #261c1a}, // Ducci Q
+  {#f2f2f2, #d9d9d9, #bfbfbf, #a6a6a6, #8c8c8c}, // Ducci U
+  {#d9d9d9, #bfbfbf, #a6a6a6, #8c8c8c, #737373}, // Ducci V
+  {#dd614a, #f5af29, #f5f5f5, #73a580, #1a535c}, // Ducci X
+  {#00ffff, #ff00ff, #ffff00, #000000}, // Electric
+  {#222222, #333333, #444444, #555555}, // Four
+  {#eeeeee, #cccccc, #aaaaaa, #888888, #666666, #444444, #222222}, // Grey
+  {#1a535c, #4ecdc4, #f7fff7, #ff6b6b, #ffe66d}, // Highur
+  {#e7e6e1, #f7f6e7, #d8c8b8, #b8a898, #988878}, // Jung
+  {#3b3b3b, #e5e5e5, #fca311, #14213d}, // Levin
+  {#e63946, #f1faee, #a8dadc, #457b9d, #1d3557}, // Meta
+  {#000000, #111111, #222222, #333333, #444444}, // Mono
+  {#0b090a, #161a1d, #660708, #a4161a, #ba181b, #e5383b, #b1a7a6, #d3d3d3, #f5f3f4, #ffffff}, // Neco
+  {#000000, #14213d, #fca311, #e5e5e5, #ffffff}, // Night
+  {#fdfffc, #2ec4b6, #e71d36, #ff9f1c, #011627}, // Ouch
+  {#2e294e, #541388, #f1e9da, #ffd400, #d90368}, // Paddle
+  {#f2d7ee, #d3bcc0, #a5668b, #69306d, #0e103d}, // Palettes
+  {#f94144, #f3722c, #f8961e, #f9844a, #f9c74f, #90be6d, #43aa8b, #4d908e, #577590, #277da1}, // Pencils
+  {#f08080, #f4978e, #f8ad9d, #fbc4ab, #ffdab9}, // Pigs
+  {#ffcdb2, #ffb4a2, #e5989b, #b5838d, #6d6875}, // Pink
+  {#e63946, #f1faee, #a8dadc, #457b9d, #1d3557}, // Pxtn
+  {#001219, #005f73, #0a9396, #94d2bd, #e9d8a6, #ee9b00, #ca6702, #bb3e03, #ae2012, #9b2226}, // Rbn
+  {#a4161a, #ba181b, #e5383b, #b1a7a6, #d3d3d3}, // Red
+  {#264653, #2a9d8f, #e9c46a, #f4a261, #e76f51}, // Retro
+  {#2b2d42, #8d99ae, #edf2f4, #ef233c, #d90429}, // Rubber
+  {#2a9d8f, #e9c46a, #f4a261, #e76f51, #264653}, // Serpentine
+  {#495057, #343a40, #212529, #adb5bd, #ced4da}, // Slate
+  {#5f6c7b, #fffffe, #3d405b, #e07a5f, #81b29a}, // Tiong Bahru
+  {#5f6c7b, #fffffe, #3d405b, #e07a5f, #81b29a}, // Tundra
+  {#540d6e, #ee4266, #ffd23f, #3bceac, #0ead69}, // Warp
+  {#264653, #2a9d8f, #e9c46a, #f4a261, #e76f51}, // Waves
+  {#ffffff, #000000} // Wb
+};
+
+int[] colors;
+
+void pickPalette() {
+  int idx = int(random(palettes.length));
+  colors = palettes[idx];
+}
+
 int rcol() {
   return colors[int(random(colors.length))];
 }
